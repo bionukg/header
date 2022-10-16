@@ -21,12 +21,12 @@
 
 typedef class bmp_header {
 public:
-	uint32_t width=0;//ÏñËØ¿í¶È
-	uint32_t memwidth=0;//ÄÚ´æÖĞÒ»ĞĞµÄ×Ö½ÚÊı
-	uint32_t height=0;//ÏñËØ¸ß¶È
-	uint16_t bitdepth=0;//Î»Éî¶È(24»ò32)
-	uint32_t size=0;//×Ü´óĞ¡=Êı¾İ´óĞ¡+bmp_headerlength
-	uint32_t datasize=0;//Êı¾İ¿é´óĞ¡
+	uint32_t width=0;//åƒç´ å®½åº¦
+	uint32_t memwidth=0;//å†…å­˜ä¸­ä¸€è¡Œçš„å­—èŠ‚æ•°
+	uint32_t height=0;//åƒç´ é«˜åº¦
+	uint16_t bitdepth=0;//ä½æ·±åº¦(24æˆ–32)
+	uint32_t size=0;//æ€»å¤§å°=æ•°æ®å¤§å°+bmp_headerlength
+	uint32_t datasize=0;//æ•°æ®å—å¤§å°
 
 	bmp_header(uint32_t wid, uint32_t hei, uint32_t bitdep)
 	{
@@ -54,7 +54,7 @@ public:
 
 
 /// <summary>
-/// ÓÒÏÂ½ÇÎªÔ­µã£¬×ø±êÏµÔÚµÚ¶şÏóÏŞ£¬¿ÓµÄÒ»Åú
+/// å³ä¸‹è§’ä¸ºåŸç‚¹ï¼Œåæ ‡ç³»åœ¨ç¬¬äºŒè±¡é™ï¼Œå‘çš„ä¸€æ‰¹
 /// </summary>
 class bmp
 {
@@ -62,26 +62,26 @@ class bmp
 #define bmp_headerlength 54
 
 public:
-	uint32_t width;//ÏñËØ¿í¶È
-	uint32_t memwidth;//ÄÚ´æÖĞÒ»ĞĞµÄ×Ö½ÚÊı
-	uint32_t height;//ÏñËØ¸ß¶È
-	uint16_t bitdepth;//Î»Éî¶È(24»ò32)
-	uint32_t size;//×Ü´óĞ¡
-	uint32_t datasize;//Êı¾İ¿é´óĞ¡
+	uint32_t width;//åƒç´ å®½åº¦
+	uint32_t memwidth;//å†…å­˜ä¸­ä¸€è¡Œçš„å­—èŠ‚æ•°
+	uint32_t height;//åƒç´ é«˜åº¦
+	uint16_t bitdepth;//ä½æ·±åº¦(24æˆ–32)
+	uint32_t size;//æ€»å¤§å°
+	uint32_t datasize;//æ•°æ®å—å¤§å°
 
-	uint8_t* file = 0;//ÎÄ¼şÊı¾İµØÖ·
-	uint8_t* data = 0;//ÏñËØÊı¾İµØÖ·= file + bmp_headerlength;
+	uint8_t* file = 0;//æ–‡ä»¶æ•°æ®åœ°å€
+	uint8_t* data = 0;//åƒç´ æ•°æ®åœ°å€= file + bmp_headerlength;
 
-	char path[MAX_PATH] = { 0 };//ÎÄ¼şÂ·¾¶
-	//ÒÔÉÏÎª¾²Ì¬Öµ
-	//ÒÔÏÂÎª¶¯Ì¬Öµ
-	uint32_t x=0;//²Ù×÷µãºá×ø±ê£¨ÓÒÏÂ½ÇÔ­µã£©
-	uint32_t y=0;//²Ù×÷µã×İ×ø±ê£¨ÓÒÏÂ½ÇÔ­µã£©
-	uint32_t memoffset=0;//²Ù×÷µãÄÚ´æ×ø±ê
-	uint8_t rgb[4]={0};//¼æÈİÆÕÍ¨Î»Í¼µÄµ¥¸öÏñËØµÄÑÕÉ«RGBÖµ´æ·Å
+	char path[MAX_PATH] = { 0 };//æ–‡ä»¶è·¯å¾„
+	//ä»¥ä¸Šä¸ºé™æ€å€¼
+	//ä»¥ä¸‹ä¸ºåŠ¨æ€å€¼
+	uint32_t x=0;//æ“ä½œç‚¹æ¨ªåæ ‡ï¼ˆå³ä¸‹è§’åŸç‚¹ï¼‰
+	uint32_t y=0;//æ“ä½œç‚¹çºµåæ ‡ï¼ˆå³ä¸‹è§’åŸç‚¹ï¼‰
+	uint32_t memoffset=0;//æ“ä½œç‚¹å†…å­˜åæ ‡
+	uint8_t rgb[4]={0};//å…¼å®¹æ™®é€šä½å›¾çš„å•ä¸ªåƒç´ çš„é¢œè‰²RGBå€¼å­˜æ”¾
 
 
-	//´´½¨Ò»¸ö¸ñÊ½´óĞ¡Ò»Ä£Ò»ÑùµÄĞÂµÄ¿Õbmp
+	//åˆ›å»ºä¸€ä¸ªæ ¼å¼å¤§å°ä¸€æ¨¡ä¸€æ ·çš„æ–°çš„ç©ºbmp
 	bmp(bmp* formatted)
 	{
 		this->width = formatted->width;
@@ -94,7 +94,7 @@ public:
 		this->data = this->file + bmp_headerlength;
 
 	}
-	//¸´ÖÆÒ»¸öbmp
+	//å¤åˆ¶ä¸€ä¸ªbmp
 	bmp(bmp& copyed)
 	{
 		this->width = copyed.width;
@@ -107,22 +107,22 @@ public:
 		this->data = this->file + bmp_headerlength;
 		memcpy(this->file, copyed.file, this->size);
 	}
-	//ÀûÓÃbmpÎÄ¼şÍ·½á¹¹´´½¨¿Õbmp
+	//åˆ©ç”¨bmpæ–‡ä»¶å¤´ç»“æ„åˆ›å»ºç©ºbmp
 	bmp(bmphd hd)
 	{
 		width = hd.width;//
-		memwidth = hd.memwidth;//ÄÚ´æÖĞÒ»ĞĞµÄ×Ö½ÚÊı
-		height = hd.height;//ÏñËØ¸ß¶È
-		bitdepth = hd.bitdepth;//Î»Éî¶È(24»ò32)
-		size = hd.size;//×Ü´óĞ¡
-		datasize = hd.datasize;//Êı¾İ¿é´óĞ¡
+		memwidth = hd.memwidth;//å†…å­˜ä¸­ä¸€è¡Œçš„å­—èŠ‚æ•°
+		height = hd.height;//åƒç´ é«˜åº¦
+		bitdepth = hd.bitdepth;//ä½æ·±åº¦(24æˆ–32)
+		size = hd.size;//æ€»å¤§å°
+		datasize = hd.datasize;//æ•°æ®å—å¤§å°
 		this->file = new uint8_t[size];
 		this->data = this->file + bmp_headerlength;
 	}
-	//É¶¶¼Ã»ÓĞ³õÊ¼»¯
+	//å•¥éƒ½æ²¡æœ‰åˆå§‹åŒ–
 	bmp(void) {};
 
-//´ò¿ªÂ·¾¶ÏÂµÄ.bmpÎÄ¼ş
+//æ‰“å¼€è·¯å¾„ä¸‹çš„.bmpæ–‡ä»¶
 	bmp(const char* newpath)
 	{
 		if (0 != this->open(newpath))
@@ -146,8 +146,8 @@ public:
 		}
 	}
 
-	//°ÑÎÄ¼şnewpathĞ´ÈëÄÚ´æfile(Ô­ÄÚ´æÎ´É¾³ı)
-	int32_t// -1:Â·¾¶²»´æÔÚ -3:ÄÚ´æ²»×ã
+	//æŠŠæ–‡ä»¶newpathå†™å…¥å†…å­˜file(åŸå†…å­˜æœªåˆ é™¤)
+	int32_t// -1:è·¯å¾„ä¸å­˜åœ¨ -3:å†…å­˜ä¸è¶³
 		open(const char* newpath)
 	{
 		if (newpath == 0)
@@ -188,10 +188,10 @@ public:
 		return 0;
 
 	}
-	//°ÑÎÄ¼şĞ´ÈëÓ²ÅÌ
-	uint32_t //-1:Â·¾¶²»´æÔÚ£»-2:
+	//æŠŠæ–‡ä»¶å†™å…¥ç¡¬ç›˜
+	uint32_t //-1:è·¯å¾„ä¸å­˜åœ¨ï¼›-2:
 		save_as(
-		const char* newpath//ÊäÈë0Ê±´æÈëÔ­Â·¾¶£¬·ñÔòĞŞ¸ÄÂ·¾¶ÎªÊäÈëÂ·¾¶
+		const char* newpath//è¾“å…¥0æ—¶å­˜å…¥åŸè·¯å¾„ï¼Œå¦åˆ™ä¿®æ”¹è·¯å¾„ä¸ºè¾“å…¥è·¯å¾„
 	)
 	{
 		if (newpath == 0)
@@ -206,22 +206,22 @@ public:
 			return -2;
 		}
 		uint8_t def[bmp_headerlength] = {
-66,		77,//¹Ì¶¨BM 0~1
-0,		0,		0,		0,//ÎÄ¼ş´óĞ¡size=datasize+bmp_headerlength 2~5
-0,		0,		0,		0,//¹Ì¶¨ 6~9
-54,		0,		0,		0,//¹Ì¶¨ÎÄ¼ş¿ªÍ·³¤¶È 10~13
-40,		0,		0,		0,//¹Ì¶¨ 14~17
-0,		0,		0,		0,//¿íwidth 18~21
-0,		0,		0,		0,//¸ßheight 22~25
-1,		0,//¹Ì¶¨ 26~27
-24,		0,//24Î»Í¼bitdepth24£¬¹Ì¶¨ 28~29
-0,		0,		0,		0,//¹Ì¶¨ 30~33
-0,		0,		0,		0,//ÏñËØÊı¾İ´óĞ¡datasize 34~37
-0,		0,		0,		0,//¹Ì¶¨ 38~41
-0,		0,		0,		0,//¹Ì¶¨ 42~45
-0,		0,		0,		0,//¹Ì¶¨ 46~49
-0,		0,		0,		0,//¹Ì¶¨ 50~53
-	//Ä¬ÈÏÎÄ¼ş¿ªÍ·
+66,		77,//å›ºå®šBM 0~1
+0,		0,		0,		0,//æ–‡ä»¶å¤§å°size=datasize+bmp_headerlength 2~5
+0,		0,		0,		0,//å›ºå®š 6~9
+54,		0,		0,		0,//å›ºå®šæ–‡ä»¶å¼€å¤´é•¿åº¦ 10~13
+40,		0,		0,		0,//å›ºå®š 14~17
+0,		0,		0,		0,//å®½width 18~21
+0,		0,		0,		0,//é«˜height 22~25
+1,		0,//å›ºå®š 26~27
+24,		0,//24ä½å›¾bitdepth24ï¼Œå›ºå®š 28~29
+0,		0,		0,		0,//å›ºå®š 30~33
+0,		0,		0,		0,//åƒç´ æ•°æ®å¤§å°datasize 34~37
+0,		0,		0,		0,//å›ºå®š 38~41
+0,		0,		0,		0,//å›ºå®š 42~45
+0,		0,		0,		0,//å›ºå®š 46~49
+0,		0,		0,		0,//å›ºå®š 50~53
+	//é»˜è®¤æ–‡ä»¶å¼€å¤´
 		};
 		*(uint32_t*)&def[2] = size;
 		*(uint32_t*)&def[18] = width;
@@ -250,12 +250,12 @@ public:
 		//return 0;
 	}
 
-	///Áí´æÎªpng
-	//²Î¿¼ÎÄÏ×£º
-	// [1]PNGÎÄ¼ş¸ñÊ½°×Æ¤Êé W3C https://blog.csdn.net/yongzhewuwei_2008/article/details/1007204 [EB/OL]2022/7/31
+	///å¦å­˜ä¸ºpng
+	//å‚è€ƒæ–‡çŒ®ï¼š
+	// [1]PNGæ–‡ä»¶æ ¼å¼ç™½çš®ä¹¦ W3C https://blog.csdn.net/yongzhewuwei_2008/article/details/1007204 [EB/OL]2022/7/31
 	// [2]svpng miloyip http://github.com/miloyip/svpng [EB/OL]2022/7/31
-	int32_t//-1´«ÈëÂ·¾¶ÎŞĞ§,-2ÎÄ¼ş´ò¿ªÊ§°Ü£¬-3ÎÄ¼şÎ»Éî¶È²»Îª24»ò32
-		save_as_png(//²Î¿¼£º
+	int32_t//-1ä¼ å…¥è·¯å¾„æ— æ•ˆ,-2æ–‡ä»¶æ‰“å¼€å¤±è´¥ï¼Œ-3æ–‡ä»¶ä½æ·±åº¦ä¸ä¸º24æˆ–32
+		save_as_png(//å‚è€ƒï¼š
 			_In_ const char* newpath)
 	{
 #ifndef SVPNG_INC_
@@ -289,7 +289,7 @@ public:
 			0x89,'P','N','G',
 			'\r','\n',0x1A,'\n'
 		};
-		static const unsigned CRCtable[] = { // CRCĞ£Ñé±í
+		static const unsigned CRCtable[] = { // CRCæ ¡éªŒè¡¨
 			0, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
 			0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
 			0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
@@ -378,7 +378,7 @@ public:
 		fclose(fp);
 #endif
 	}
-	//´Ó×ø±êÕÒÄÚ´æ
+	//ä»åæ ‡æ‰¾å†…å­˜
 	//uint(& open)(const char*newpath) = memloadfile;
 	//uint(bmp::* save)(const char*) = diskloadfile;
 
@@ -457,7 +457,7 @@ public:
 	{
 		memcpy(rgb, file + pointfind_r(x, y), bitdepth / 8);
 	}
-	//·´Ğò¶ÁÈ¡µ½rgbs
+	//ååºè¯»å–åˆ°rgbs
 	void pointread_r(uint32_t x, uint32_t y)
 	{
 		memcpy(rgb, file + pointfind_r(x, y), bitdepth / 8);
