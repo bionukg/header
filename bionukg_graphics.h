@@ -5,7 +5,7 @@
 #endif // !_CRT_SECURE_NO_WARNINGS
 //#define fwrite(buffer,size,leng,fp) {fwrite(buffer,size,leng,fp);fw++;}
 
-#ifndef bionukg_graphics
+#ifndef _bionukg_graphics_h_
 
 #include <stdio.h>
 #include<stdint.h>
@@ -15,7 +15,7 @@
 #endif // !MAX_PATH
 #include <stdlib.h>
 //#include"./bionukg_optimize.h"
-#define bionukg_graphics
+#define _bionukg_graphics_h_
 
 
 
