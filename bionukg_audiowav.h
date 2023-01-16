@@ -5,10 +5,11 @@
 #ifndef PI
 #define PI  acos(-1.0)
 #endif
+#ifndef _bionukg_audiowav_h
 #define _bionukg_audiowav_h
 class wav
 {
-#define wav_headerlength 0x26
+#define wav_headerlength 38
 private:
     uint8_t* header=0;
     uint32_t* filetag=0;//"RIFF"
@@ -25,10 +26,10 @@ private:
     uint16_t* extrasize=0;//额外块
 public:
     uint8_t* extra = 0;
-    uint32_t datastart = 0;
+    uint32_t datastart = 0;//"data"
     uint8_t* data = 0;
     uint32_t datasize = 0;
-    uint8_t* file = 0;
+    uint8_t* file = 0;//用于播放
     uint32_t inline _4chars(const char str[5])
     {
         return *(uint32_t*)str;
@@ -169,7 +170,8 @@ public:
         memcpy(data, in.data, datasize);
 
     }
-    void init_std_wav(void) //sono,65536Hz,8bit
+    //sono,65536Hz,8bit
+    void init_std_wav(void) 
     {
         init_wav(1, 0x10000, 8);
         return;
@@ -186,6 +188,124 @@ public:
         *extrasize = 0;
         return;
     }
+    private:
+    int16_t inline double_int16(double x)
+    {
+        int32_t r = round(x);
+        return r < INT16_MIN ? INT16_MIN : (r > INT16_MAX ? INT16_MAX : r);
+    }
+    public:
+
+    wav* new_wav16_multi_n(void(*fn)(double*, uint32_t, double*),uint32_t n)
+    {
+        wav* ret = new wav();
+        ret->init_wav(*this->soundtrack, *this->sampling_rate *n, *this->bitdepth);
+        ret->resize(this->datasize * n);
+        uint32_t retcnt = 0, incnt = 0;
+        double* inbuf = new double[points_counts()];
+        for (; incnt < this->points_counts(); incnt++)
+        {
+            inbuf[incnt] = this->getpoint16sono(incnt);
+        }
+        double* outbuf = new double[points_counts()*n];
+
+        fn(inbuf, points_counts(), outbuf);
+
+        for (; retcnt < this->points_counts() * n; retcnt++)
+        {
+            ret->putpoint16sono(double_int16(outbuf[retcnt]), retcnt);
+        }
+        delete[]inbuf;
+        delete[]outbuf;
+        return ret;
+    }
+
+    wav* new_wav16_up_sample(uint32_t rate)
+    {
+        wav* ret = new wav;
+        ret->init_wav(*soundtrack, *sampling_rate * rate, *bitdepth);
+        ret->resize(this->datasize * rate);
+        for (uint32_t i = 0; i < this->points_counts(); i++)
+        {
+            ((int16_t*)(ret->data))[i* rate] = ((int16_t*)(this->data))[i];
+        }
+        return ret;
+    }
+
+    wav* new_wav16_down_sample(uint32_t rate)
+    {
+        wav* ret = new wav;
+        ret->init_wav(*soundtrack, *sampling_rate / rate, *bitdepth);
+        ret->resize(this->datasize / rate);
+        for (uint32_t i = 0; i < ret->points_counts(); i++)
+        {
+            ((int16_t*)(ret->data))[i] = ((int16_t*)(this->data))[i * rate];
+        }
+        return ret;
+    }
+
+#ifdef _bionukg_signal_h_
+    wav* new_wav16_lowpass_filter_gained(double normalized_freq,double gain)
+    {
+        int fflen = 0x8000;
+        FFT_sys fs(fflen);
+        fs.set_low_pass(normalized_freq);
+        fs.set_gain(gain);
+        wav* ret = new wav();
+        ret->init_wav(*soundtrack, *sampling_rate, *bitdepth);
+        ret->resize(this->datasize);
+        uint32_t inidx = 0, outidx = 0;
+        for (inidx = 0; inidx < fflen; inidx++)
+        {
+            fs.io(this->getpoint16sono(inidx));
+        }
+        for (inidx = fflen; inidx < this->points_counts(); inidx++, outidx++)
+        {
+            ret->putpoint16sono(fs.io(this->getpoint16sono(inidx)), outidx);
+        }
+        for (; outidx < this->points_counts(); outidx++)
+        {
+            ret->putpoint16sono(fs.io(0), outidx);
+        }
+        return ret;
+    }
+    wav* new_wav16_lowpass_filter(double normalized_freq)
+    {
+        int fflen = 0x8000;
+        FFT_sys fs(fflen);
+        fs.set_low_pass(normalized_freq);
+        wav* ret = new wav();
+        ret->init_wav(*soundtrack, *sampling_rate, *bitdepth);
+        ret->resize(this->datasize);
+        uint32_t inidx = 0, outidx = 0;
+        for (inidx = 0; inidx < fflen; inidx++)
+        {
+            fs.io(this->getpoint16sono(inidx));
+        }
+        for (inidx = fflen; inidx < this->points_counts(); inidx++,outidx++)
+        {
+            ret->putpoint16sono(fs.io(this->getpoint16sono(inidx)), outidx);
+        }
+        for (; outidx < this->points_counts(); outidx++)
+        {
+            ret->putpoint16sono(fs.io(0), outidx);
+        }
+        return ret;
+    } 
+    wav* new_wav16_random_noise_signal(void)
+    {
+        wav* ret = new wav();
+        ret->init_wav(*soundtrack, *sampling_rate, *bitdepth);
+        ret->resize(this->datasize);
+        for (uint32_t i = 0, len = this->points_counts(); i < len; i++)
+        {
+            ret->putpoint16sono(rand16(),i);
+        }
+        return ret;
+    }
+
+#endif
+
     //void fill_wav32(int32_t(*f_t)(uint32_t), uint32_t sampleing_point_count)
     //{
     //    if (*bitdepth != 32)
@@ -226,6 +346,18 @@ public:
     //    }
     //    return;
     //}
+    void resize(uint32_t newsize)
+    {
+        uint32_t oldsize = datasize;
+        uint8_t* ndata = new uint8_t[newsize]{};
+        if (data != 0)
+        {
+            memcpy(ndata, data, newsize < oldsize ? newsize : oldsize);
+            delete[] data;
+        }
+        data = ndata;
+        datasize = newsize;
+    }
     void fill_wav8(int8_t(*f_t)(uint32_t), uint32_t sampleing_point_count)
     {
         if (*bitdepth != 8)
@@ -233,6 +365,8 @@ public:
             printf("\n不是8位音频\n");
             system("pause");
         }
+        if (data != 0)
+            delete[]data;
         data = (uint8_t*)new int8_t[sampleing_point_count];
         datasize = *bitdepth / 8;
         datasize *= sampleing_point_count;
@@ -245,7 +379,7 @@ public:
         }
         return;
     }
-    void fill_wav8_double(double(*f_t)(double), time_t t)
+    void fill_wav8t_double(double(*f_t)(double), time_t t)
     {
         if (*bitdepth != 8)
         {
@@ -253,6 +387,8 @@ public:
             system("pause");
         }
         uint64_t sampleing_point_count = t * *sampling_rate;
+        if (data != 0)
+            delete[]data;
         data = (uint8_t*)new int8_t[sampleing_point_count];
         datasize = *bitdepth / 8;
         datasize *= sampleing_point_count;
@@ -268,14 +404,16 @@ public:
         }
         return;
     }
-    void fill_wav16_double(double(*f_t)(double), time_t t)
+    void fill_wav16t_double(double(*f_t)(double), double t)
     {
         if (*bitdepth != 16)
         {
             printf("\n不是16位音频\n");
             system("pause");
         }
-        uint64_t sampleing_point_count = t * *sampling_rate;
+        uint64_t sampleing_point_count =(uint64_t) (t * *sampling_rate);
+        if (data != 0)
+            delete[]data;
         data = (uint8_t*)new int16_t[sampleing_point_count];
         datasize = *bitdepth / 8;
         datasize *= sampleing_point_count;
@@ -298,6 +436,8 @@ public:
             printf("\n不是16位音频\n");
             system("pause");
         }
+        if (data != 0)
+            delete[]data;
         data = (uint8_t*)new int16_t[sampleing_point_count];
         datasize = *bitdepth / 8;
         datasize *= sampleing_point_count;
@@ -318,6 +458,8 @@ public:
             printf("\n不是16位音频\n");
             system("pause");
         }
+        if (data != 0)
+            delete[]data;
         data = (uint8_t*)new int16_t[sampleing_point_count];
         datasize = *bitdepth / 8;
         datasize *= sampleing_point_count;
@@ -331,7 +473,6 @@ public:
         return;
 
     }
-
     //void fill_wavfloat_double(float(*f_t)(double), time_t t)
     //{
     //    if (*bitdepth != 32)
@@ -390,7 +531,22 @@ public:
         fclose(fp);
         return;
     }
-
+    uint32_t points_counts()
+    {
+        return datasize * 8 / *bitdepth;
+    }
+    int16_t getpoint16sono(uint32_t idx)
+    {
+        if (data != 0)
+            return ((int16_t*)data)[idx];
+        else       
+            return 0;        
+    }
+    void putpoint16sono(int16_t input, uint32_t idx)
+    {
+        if (data != 0)
+        ((int16_t*)data)[idx] = input;
+    }
 
 //激活这个功能，你需要
 //#include<Windows.h>
@@ -442,7 +598,7 @@ public:
 #endif
 
 };
-
+#endif
 //参考文献(雾)https://www.cnblogs.com/wangguchangqing/p/5970516.html
 // 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
