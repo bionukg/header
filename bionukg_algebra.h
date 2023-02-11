@@ -1,12 +1,17 @@
 #pragma once
 
+
+#ifndef bionukg_algebra_h
 #include<intrin.h>
+
+
+
+#define bionukg_algebra_h (0x00)
+
 template <class unif>
 class int_inf;
 
 
-
-//size=1, bit=8.
 
 class DECchar
 {	
@@ -84,7 +89,7 @@ template <int scale>
 class N_nary
 {
 public:
-	//½öÓÃÓÚ2½øÖÆµ½10½øÖÆ
+	//ä»…ç”¨äº2è¿›åˆ¶åˆ°10è¿›åˆ¶
 	static_assert(2 <= scale && scale <= 10, "N_nary<n>: n should be a number between 2 and 10.");
 	char n;
 	N_nary() { n = '0'; }
@@ -214,7 +219,7 @@ protected:
 	size_t length = 0;
 	size_t used = 0;
 	bool is_negative = false;
-	unif* nums = stacks;//nums[0]ÊÇ×îµÍµÄÎ»
+	unif* nums = stacks;//nums[0]æ˜¯æœ€ä½çš„ä½
 	unif stacks[int_inf_stacklength] = { 0 };
 	void stdnew()
 	{
@@ -325,9 +330,9 @@ public:
 
 	//template <typename aunif>
 	//int_inf<aunif>& dynamic_cast_as(int_inf<aunif>* typeptr)
-	//{//²»ÄÜ½ö°´·µ»ØÖµÖØÔØ...Ä£°å´ó¸ÅÒ²Ò»Ñù
+	//{//ä¸èƒ½ä»…æŒ‰è¿”å›å€¼é‡è½½...æ¨¡æ¿å¤§æ¦‚ä¹Ÿä¸€æ ·
 	//	int_inf<aunif>* ret = (int_inf<aunif>*)this;
-	//Í»È»·¢ÏÖ»á¸ãÂÒstacks£¬ËùÒÔËãÁË
+	//çªç„¶å‘ç°ä¼šæä¹±stacksï¼Œæ‰€ä»¥ç®—äº†
 	//	return *ret;
 	//}
 	uint8_t castu8()
@@ -398,7 +403,7 @@ public:
 
 #endif
 	
-	void superadd(unif c)//ÔÚÄ©Î²£¨×î¸ßÎ»£©×·¼ÓÒ»¸öµ¥Ôª
+	void superadd(unif c)//åœ¨æœ«å°¾ï¼ˆæœ€é«˜ä½ï¼‰è¿½åŠ ä¸€ä¸ªå•å…ƒ
 	{
 		if (this->length <= this->used + 4)
 		{
@@ -500,7 +505,7 @@ public:
 		return;
 	}
 private:
-	//sbbÖØÔØ
+	//sbbé‡è½½
 	unsigned char inline __cdecl subborrow(uint8_t c, uint8_t a, uint8_t b, uint8_t* r)
 		{
 			return _subborrow_u8(c, a, b, r);
@@ -524,7 +529,7 @@ private:
 	{
 		return a.subborrow(c, a, b, r);
 	}
-	//adcÖØÔØ
+	//adcé‡è½½
 	unsigned char inline __cdecl addcarry(uint8_t c, uint8_t a, uint8_t b, uint8_t* r)
 		{
 			return _addcarry_u8(c, a, b, r);
@@ -661,7 +666,7 @@ public:
 		return *this;
 	}	
 private:
-	//mulxÖØÔØ
+	//mulxé‡è½½
 	uint8_t  mulx(uint8_t src0, uint8_t src1, uint8_t* highbits)
 	{
 
@@ -775,7 +780,7 @@ public:
 };
 
 
-//ÂÔÎ¢¿ìËÙµÄ³Ë·¨¡£ÕæµÄÓĞÓÃÂğ£¿
+//ç•¥å¾®å¿«é€Ÿçš„ä¹˜æ³•ã€‚çœŸçš„æœ‰ç”¨å—ï¼Ÿ
 template<typename INType>
 void inline product(const INType& x, const INType& y, INType xy[2])
 {
@@ -814,9 +819,9 @@ void inline product(const INType& x, const INType& y, INType xy[2])
 #if !defined(_M_IX86) && !defined(_M_X64)
 #error These functions might be specific to X86 and X64 targets
 #endif
-//°ë×Ô¶¯ºêÄ£°å 	Ê¾Àı£ºMACRO_int_inf_add(64, n2, n3);
-//ÊÇÎÒ²İÂÊÁË¡£ÎÒÍüÁËº¯Êı¿ÉÒÔÖØÔØ¡£Ïê¼ûaddcarry
-//ÕâÍæÒâÁô×Å×öºêÓÃ·¨µÄ²Î¿¼°É£¬ËäÈ»É¾ÁËÒ²Ã»ÊÂ¡£
+//åŠè‡ªåŠ¨å®æ¨¡æ¿ 	ç¤ºä¾‹ï¼šMACRO_int_inf_add(64, n2, n3);
+//æ˜¯æˆ‘è‰ç‡äº†ã€‚æˆ‘å¿˜äº†å‡½æ•°å¯ä»¥é‡è½½ã€‚è¯¦è§addcarry
+//è¿™ç©æ„ç•™ç€åšå®ç”¨æ³•çš„å‚è€ƒå§ï¼Œè™½ç„¶åˆ äº†ä¹Ÿæ²¡äº‹ã€‚
 #define MACRO_int_inf_add(bits,this,that) do{\
 	static_assert(sizeof(*(this.get_nums())) == sizeof(__int##bits), "size error: sizeof(unif)!=sizeof(unsigned __int"#bits")");\
 	auto maxused = this.get_used() > that.get_used() ? this.get_used() : that.get_used();\
@@ -831,7 +836,7 @@ void inline product(const INType& x, const INType& y, INType xy[2])
 	that.refresh_used();\
 	}while(false)
 
-
+#endif 
 
 
 
