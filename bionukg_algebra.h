@@ -3,15 +3,10 @@
 
 #ifndef bionukg_algebra_h
 #include<intrin.h>
-
-
-
 #define bionukg_algebra_h (0x00)
 
 template <class unif>
 class int_inf;
-
-
 
 class DECchar
 {	
