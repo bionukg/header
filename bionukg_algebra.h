@@ -1,5 +1,8 @@
 #pragma once
-
+	//int_inf<N_nary<10/*10进制*/>> b1, b2, b3;
+	//b1 = "1234";
+	//b2 = "5678";
+	//b3.mul_abs(b1, b2).show(0);
 
 #ifndef bionukg_algebra_h
 #include<intrin.h>
